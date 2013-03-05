@@ -23,13 +23,13 @@ public class MazeGame extends JPanel implements EventListener{
 
 	private static final long serialVersionUID = 3896314035336100692L;
 	
-	private static final int SCREEN_W = 800;
-	private static final int SCREEN_H = 600;
+	private static int SCREEN_W = 800;
+	private static int SCREEN_H = 600;
 	
 	private static int paintSleepTime = 25;
 
 	private static Player player;
-	
+
 	private static int ROWS = -1;
 	private static int COLUMNS = -1;
 	
@@ -40,13 +40,25 @@ public class MazeGame extends JPanel implements EventListener{
 	private static GridBlocks floorGrid;
 	private static GridBlocks wallsGrid;
 	private static GridBlocks trapsGrid;
+	private static GridBlocks bonusGrid;
+	private static GridBlocks monsterGrid;
 	private static GridBlocks playersGrid;
+	
+	private static Image floorImage;
+	private static Image playerImage;
+	private static Image wallImage;
+	private static Image fireImage;
+	private static Image treasureImage;
+	private static Image heartImage;
+	private static Image spiderImage;
 	
 	MazeGame() {
 		loading = true;
-		loadMap("C:\\Users\\Ryan\\Desktop\\Java Programs\\MazeGame");
+		loadMap(getClass().getClassLoader().getResource("").getPath());
 		loading = false;
 		
+		SCREEN_W = COLUMNS*BLOCKSIZE;
+		SCREEN_H = ROWS*BLOCKSIZE+20;
 		setPreferredSize(new Dimension(SCREEN_W, SCREEN_H));
 		
 		JFrame frame = new JFrame("Maze Game");
@@ -64,49 +76,48 @@ public class MazeGame extends JPanel implements EventListener{
 	}
 	
 	private void loadMap(String path) {
-
+	
+		floorImage = new ImageIcon(path+"images/floorImage.png").getImage();
+		playerImage = new ImageIcon(path+"images/playerImage.png").getImage();
+		wallImage = new ImageIcon(path+"images/wallImage.png").getImage();
+		fireImage = new ImageIcon(path+"images/fireImageSheet.png").getImage();
+		treasureImage = new ImageIcon(path+"images/treasureImage.png").getImage();
+		heartImage = new ImageIcon(path+"images/heartImage.png").getImage();
+		spiderImage = new ImageIcon(path+"images/spiderImage.png").getImage();
+		
 		String name = JOptionPane.showInputDialog("Map Name: "); 
 		
-		Image basicBlockImage = new ImageIcon(path+"\\images\\floorBlock.png").getImage();
-		Image playerBlockImage = new ImageIcon(path+"\\images\\player.png").getImage();
-		Image wallBlockImage = new ImageIcon(path+"\\images\\darkBrickBlock.png").getImage();
-		Image deathBlockImage = new ImageIcon(path+"\\images\\deathBlock.png").getImage();
 		try {
-			FileInputStream fstream = new FileInputStream(path+"\\maps\\"+name+".cyan");
-			DataInputStream in = new DataInputStream(fstream);
-			BufferedReader br = new BufferedReader(new InputStreamReader(in));
-
-			String line;
-			int row = 0;
-			while((line = br.readLine()) != null) {
-				if(COLUMNS == -1) COLUMNS = line.length();
-				row += 1;
-			}
-			ROWS = row;	
-		} catch (IOException e) {
-			JOptionPane.showMessageDialog(null, "Error loading map.", "Error", JOptionPane.ERROR_MESSAGE);
-			System.exit(1);
-		}
-		
-		floorGrid = new GridStaticBlocks(BLOCKSIZE, BLOCKSIZE, ROWS, COLUMNS);
-		wallsGrid = new GridStaticBlocks(BLOCKSIZE, BLOCKSIZE, ROWS, COLUMNS);
-		trapsGrid = new GridStaticBlocks(BLOCKSIZE, BLOCKSIZE, ROWS, COLUMNS);
-		playersGrid = new GridDynamicBlocks(BLOCKSIZE, BLOCKSIZE, ROWS, COLUMNS);
-		
-		try {
-			FileInputStream fstream = new FileInputStream(path+"\\maps\\"+name+".cyan");
+			FileInputStream fstream = new FileInputStream(path+"maps/"+name+".cyan");
 			DataInputStream in = new DataInputStream(fstream);
 			BufferedReader br = new BufferedReader(new InputStreamReader(in));
 			
 			String line;
 			int row = 0;
 			while((line = br.readLine()) != null) {
-				int length = line.length();
-				for(int i = 0; i < length; i ++) {
-					String c = line.substring(i, i+1);
-					if(c.equals("1")) wallsGrid.addBlock(new WallBlock(row, i, wallBlockImage, this));
-					if(c.equals("2")) trapsGrid.addBlock(new DeathBlock(row, i, deathBlockImage, this));
-					if(c.equals("3")) player = new Player(row, i, playerBlockImage, this);
+				if(row == 0) {
+					ROWS = Integer.parseInt(line);
+				}
+				else if(row == 1) {
+					COLUMNS = Integer.parseInt(line);
+
+					floorGrid = new GridStaticBlocks(BLOCKSIZE, BLOCKSIZE, ROWS, COLUMNS);
+					wallsGrid = new GridStaticBlocks(BLOCKSIZE, BLOCKSIZE, ROWS, COLUMNS);
+					trapsGrid = new GridStaticBlocks(BLOCKSIZE, BLOCKSIZE, ROWS, COLUMNS);
+					bonusGrid = new GridStaticBlocks(BLOCKSIZE, BLOCKSIZE, ROWS, COLUMNS);
+					monsterGrid = new GridDynamicBlocks(BLOCKSIZE, BLOCKSIZE, ROWS, COLUMNS);
+					playersGrid = new GridDynamicBlocks(BLOCKSIZE, BLOCKSIZE, ROWS, COLUMNS);
+				}
+				else {
+					for(int i = 0; i < line.length(); i ++) {
+						String c = line.substring(i, i+1);
+						if(c.equals("1")) wallsGrid.addBlock(new WallBlock(row-2, i, wallImage, this));
+						if(c.equals("2")) trapsGrid.addBlock(new FireBlock(row-2, i, fireImage, this));
+						if(c.equals("3")) player = new Player(row-2, i, playerImage, this);
+						if(c.equals("4")) bonusGrid.addBlock(new Treasure(row-2, i, treasureImage, this));
+						if(c.equals("5")) monsterGrid.addBlock(new Spider(row-2, i, spiderImage, this));
+						if(c.equals("6")) bonusGrid.addBlock(new Heart(row-2, i, heartImage, this));
+					}
 				}
 				row += 1;
 			}	
@@ -117,7 +128,7 @@ public class MazeGame extends JPanel implements EventListener{
 
 		for (int i = 0; i < ROWS; i++) {
 			for (int j = 0; j < COLUMNS; j++) {
-				floorGrid.addBlock(new BasicBlock(i, j, basicBlockImage, this));	
+				floorGrid.addBlock(new BasicBlock(i, j, floorImage, this));	
 			}
 		}
 		playersGrid.addBlock(player);
@@ -125,6 +136,8 @@ public class MazeGame extends JPanel implements EventListener{
 		gridLayers.put(GridType.FLOOR, floorGrid);
 		gridLayers.put(GridType.WALLS, wallsGrid);
 		gridLayers.put(GridType.TRAPS, trapsGrid);
+		gridLayers.put(GridType.BONUS, bonusGrid);
+		gridLayers.put(GridType.MONSTERS, monsterGrid);
 		gridLayers.put(GridType.PLAYERS, playersGrid);
 	}
 	
@@ -138,7 +151,9 @@ public class MazeGame extends JPanel implements EventListener{
 			if(!isFocusOwner()) requestFocusInWindow();
 			
 			try {
+				gridLayers.get(GridType.TRAPS).trigger(new Event(EventType.TICK), this);
 				gridLayers.get(GridType.PLAYERS).trigger(new Event(EventType.TICK), this);
+				gridLayers.get(GridType.MONSTERS).trigger(new Event(EventType.TICK), this);
 			} catch (PreventDefaultException e) {}
 			
 			repaint();
@@ -158,19 +173,31 @@ public class MazeGame extends JPanel implements EventListener{
 		g2d.drawImage(gridLayers.get(GridType.FLOOR).getImage(), 0, 0, null);
 		g2d.drawImage(gridLayers.get(GridType.WALLS).getImage(), 0, 0, null);
 		g2d.drawImage(gridLayers.get(GridType.TRAPS).getImage(), 0, 0, null);
+		g2d.drawImage(gridLayers.get(GridType.BONUS).getImage(), 0, 0, null);
+		g2d.drawImage(gridLayers.get(GridType.MONSTERS).getImage(), 0, 0, null);
 		g2d.drawImage(gridLayers.get(GridType.PLAYERS).getImage(), 0, 0, null);
 		
+		g2d.setColor(Color.GRAY);
+		g2d.drawLine(0, SCREEN_H-20, SCREEN_W, SCREEN_H-20);
+		
+		g2d.drawImage(heartImage, 2, SCREEN_H-18, null);
+		
 		g2d.setColor(Color.RED);
-		g2d.fill(new Rectangle2D.Double(0, 560, player.getMaxHP(), 10));
+		g2d.fill(new Rectangle2D.Double(20, SCREEN_H-15, 100, 12));
 		g2d.setColor(Color.GREEN);
-		g2d.fill(new Rectangle2D.Double(0, 560, player.getHP(), 10));
-	
+		g2d.fill(new Rectangle2D.Double(20, SCREEN_H-15, 100*(player.getHP()/player.getMaxHP()), 12));
+		
+		g2d.setColor(Color.BLACK);
+		g2d.drawString((int)player.getHP()+"/"+(int)player.getMaxHP(), 45, SCREEN_H-5);
 	}
 	
 	@Override
 	public void trigger(Event event, EventListener sender)  throws PreventDefaultException{
 		for(GridType type : gridLayers.keySet()){ 
-			gridLayers.get(type).trigger(event, sender);
+			if(event.type == EventType.DESTROY_ME) {
+				if(event.args.get("type") == type) gridLayers.get(type).trigger(event, sender);
+			}
+			else gridLayers.get(type).trigger(event, sender);
 		}
 	}
 	

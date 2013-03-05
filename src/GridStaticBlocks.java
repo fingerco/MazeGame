@@ -91,6 +91,10 @@ public class GridStaticBlocks extends GridBlocks {
 				if(block != null) block.trigger(event, sender);
 			}
 		}
+		else if(event.type == EventType.DESTROY_ME) {
+			Block block = (Block)event.args.get("block");
+			removeBlock(block);
+		}
 	}
 
 	public BufferedImage getImage() {
@@ -122,6 +126,10 @@ public class GridStaticBlocks extends GridBlocks {
 	
 	public void addBlock(Block block) {
 		blocks[block.getRow()][block.getColumn()] = block;
+	}
+	
+	public void removeBlock(Block block) {
+		if(block != null) blocks[block.getRow()][block.getColumn()] = null;
 	}
 	
 }

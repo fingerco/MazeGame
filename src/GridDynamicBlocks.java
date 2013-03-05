@@ -34,6 +34,10 @@ public class GridDynamicBlocks extends GridBlocks {
 		blocks.add(block);
 	}
 	
+	public void removeBlock(Block block) {
+		blocks.remove(block);
+	}
+	
 	public BufferedImage getImage() {
 		BufferedImage image = new BufferedImage(columns*blockWidth, rows*blockHeight, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g = image.createGraphics();
@@ -102,5 +106,16 @@ public class GridDynamicBlocks extends GridBlocks {
 				}
 			}
 		}
+		else if(event.type == EventType.UPDATE_VISION) {
+			for (Block block : blocks) {
+				block.trigger(event, sender);	
+			}
+		}
+		else if(event.type == EventType.DESTROY_ME) {
+			Block block = (Block)event.args.get("block");
+			
+			removeBlock(block);
+		}
+		
 	}
 }

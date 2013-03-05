@@ -3,8 +3,7 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-
-public class Player extends Block implements EventListener{
+public class Player extends Block {
 
 	private double HP = 100;
 	private double maxHP = 100;
@@ -114,8 +113,18 @@ public class Player extends Block implements EventListener{
 			
 			updateVision(sender);
 		}
+		else if(event.type == EventType.UPDATE_VISION) {
+			updateVision(parent);
+		}
+		else if(event.type == EventType.WALK) {
+			sender.trigger(new Event(EventType.WALK), this);
+		}
 		else if(event.type == EventType.TAKE_DAMAGE) {
 			HP -= (int)event.args.get("damage");
+		} 
+		else if(event.type == EventType.HEAL) {
+			HP += (int)event.args.get("health");
+			if(HP > maxHP) HP = maxHP;
 		} 
 		else if(event.type == EventType.TICK) {
 			onTick(sender);
