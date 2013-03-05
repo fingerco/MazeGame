@@ -35,7 +35,7 @@ public class MapCreator extends JPanel {
 	
 	private static Integer[][] blocks;
 	
-	private static String imageLoc = "C:\\Users\\ryan.brown\\Desktop\\LearningJava\\MazeGame\\images\\";
+	private static String imageLoc = "C:\\Users\\Ryan\\Desktop\\Java Programs\\MazeGame\\images\\";
 	private static Image basicBlockImage = new ImageIcon(imageLoc+"defaultBlock.png").getImage();
 	private static Image playerBlockImage = new ImageIcon(imageLoc+"player.png").getImage();
 	private static Image wallBlockImage = new ImageIcon(imageLoc+"wallBlock.png").getImage();
@@ -130,7 +130,7 @@ public class MapCreator extends JPanel {
 		String name = JOptionPane.showInputDialog("File Name: "); 
 		
 		try {
-			FileWriter stream = new FileWriter("..\\maps\\"+name);
+			FileWriter stream = new FileWriter("..\\maps\\"+name+".cyan");
 			BufferedWriter out = new BufferedWriter(stream);
 			
 			for(int i = 0; i < blocks.length; i ++) {

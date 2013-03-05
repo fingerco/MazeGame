@@ -44,7 +44,7 @@ public class MazeGame extends JPanel implements EventListener{
 	
 	MazeGame() {
 		loading = true;
-		loadMap();
+		loadMap("C:\\Users\\Ryan\\Desktop\\Java Programs\\MazeGame");
 		loading = false;
 		
 		setPreferredSize(new Dimension(SCREEN_W, SCREEN_H));
@@ -63,16 +63,16 @@ public class MazeGame extends JPanel implements EventListener{
 		gameLoop();
 	}
 	
-	private void loadMap() {
+	private void loadMap(String path) {
 
 		String name = JOptionPane.showInputDialog("Map Name: "); 
 		
-		Image basicBlockImage = new ImageIcon(getClass().getResource("/images/defaultBlock.png")).getImage();
-		Image playerBlockImage = new ImageIcon(getClass().getResource("/images/player.png")).getImage();
-		Image wallBlockImage = new ImageIcon(getClass().getResource("/images/wallBlock.png")).getImage();
-		Image deathBlockImage = new ImageIcon(getClass().getResource("/images/deathBlock.png")).getImage();
+		Image basicBlockImage = new ImageIcon(path+"\\images\\floorBlock.png").getImage();
+		Image playerBlockImage = new ImageIcon(path+"\\images\\player.png").getImage();
+		Image wallBlockImage = new ImageIcon(path+"\\images\\darkBrickBlock.png").getImage();
+		Image deathBlockImage = new ImageIcon(path+"\\images\\deathBlock.png").getImage();
 		try {
-			FileInputStream fstream = new FileInputStream(getClass().getResource("/maps/"+name+".cyan").getPath());
+			FileInputStream fstream = new FileInputStream(path+"\\maps\\"+name+".cyan");
 			DataInputStream in = new DataInputStream(fstream);
 			BufferedReader br = new BufferedReader(new InputStreamReader(in));
 
@@ -94,7 +94,7 @@ public class MazeGame extends JPanel implements EventListener{
 		playersGrid = new GridDynamicBlocks(BLOCKSIZE, BLOCKSIZE, ROWS, COLUMNS);
 		
 		try {
-			FileInputStream fstream = new FileInputStream(getClass().getResource("/maps/"+name+".cyan").getPath());
+			FileInputStream fstream = new FileInputStream(path+"\\maps\\"+name+".cyan");
 			DataInputStream in = new DataInputStream(fstream);
 			BufferedReader br = new BufferedReader(new InputStreamReader(in));
 			
