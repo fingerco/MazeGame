@@ -27,8 +27,6 @@ public class MazeGame extends JPanel implements EventListener{
 	private static int SCREEN_W = 800;
 	private static int SCREEN_H = 600;
 	
-	// HELO
-	
 	private static Player player;
 	private static int ROWS = -1;
 	private static int COLUMNS = -1;

@@ -3,8 +3,6 @@ import java.util.HashMap;
 
 public class Heart extends Block {
 
-	private int pie = 314;
-	
 	private Image img;
 
 	Heart(int row, int column, Image img, EventListener parent) {
