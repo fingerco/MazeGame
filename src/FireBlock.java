@@ -18,16 +18,16 @@ public class FireBlock extends Block {
 		this.column = column;
 		this.img = img;
 		
-		sprites = img.getWidth(null)/16;
+		sprites = img.getWidth(null)/32;
 		
 		this.parent = parent;
 	}
 	
 	@Override
 	public Image getImage() {
-		BufferedImage buff = new BufferedImage(16, 16, BufferedImage.TYPE_INT_RGB);
+		BufferedImage buff = new BufferedImage(32, 32, BufferedImage.TYPE_INT_RGB);
 		Graphics2D g = buff.createGraphics();
-		g.drawImage(img, -16*(currSprite-1), 0, null);
+		g.drawImage(img, -32*(currSprite-1), 0, null);
 
 		return buff;
 	}

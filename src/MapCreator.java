@@ -64,7 +64,7 @@ public class MapCreator extends JPanel {
 
 		newMap(ROWS, COLUMNS);
 		
-		setPreferredSize(new Dimension(COLUMNS*16, ROWS*16));
+		setPreferredSize(new Dimension(COLUMNS*32, ROWS*32));
 		
 		final JFrame frame = new JFrame("Maze Game - Map Creator");
 		
@@ -100,8 +100,8 @@ public class MapCreator extends JPanel {
 
 		this.addMouseListener(new MouseListener() {
 			public void mousePressed(MouseEvent e) {
-				int column =  (e.getX()-e.getX()%16)/16;
-				int row =  (e.getY()-e.getY()%16)/16;
+				int column =  (e.getX()-e.getX()%32)/32;
+				int row =  (e.getY()-e.getY()%32)/32;
 
 				if(row >= ROWS || column >= COLUMNS) return;
 				
@@ -144,8 +144,8 @@ public class MapCreator extends JPanel {
 		btnNew.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				newMap();
-				setPreferredSize(new Dimension(COLUMNS*16, ROWS*16));
-				setSize(new Dimension(COLUMNS*16, ROWS*16));
+				setPreferredSize(new Dimension(COLUMNS*32, ROWS*32));
+				setSize(new Dimension(COLUMNS*32, ROWS*32));
 				frame.pack();
 			}
 		});
@@ -155,8 +155,8 @@ public class MapCreator extends JPanel {
 		btnLoad.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				loadMap();
-				setPreferredSize(new Dimension(COLUMNS*16, ROWS*16));
-				setSize(new Dimension(COLUMNS*16, ROWS*16));
+				setPreferredSize(new Dimension(COLUMNS*32, ROWS*32));
+				setSize(new Dimension(COLUMNS*32, ROWS*32));
 				frame.pack();	
 			}
 		});
@@ -353,23 +353,23 @@ public class MapCreator extends JPanel {
 			for (int j = 0; j < blocks[i].length; j++) {
 				int value = blocks[i][j];
 				
-				if(value == 0) g2d.drawImage(floorImage, j*16, i*16, null);
-				if(value == 1) g2d.drawImage(wallImage, j*16, i*16, null);
-				if(value == 2) g2d.drawImage(fireImage, j*16, i*16, null);
-				if(value == 3) g2d.drawImage(playerImage, j*16, i*16, null);
-				if(value == 4) g2d.drawImage(treasureImage, j*16, i*16, null);
-				if(value == 5) g2d.drawImage(spiderImage, j*16, i*16, null);
-				if(value == 6) g2d.drawImage(heartImage, j*16, i*16, null);
+				if(value == 0) g2d.drawImage(floorImage, j*32, i*32, null);
+				if(value == 1) g2d.drawImage(wallImage, j*32, i*32, null);
+				if(value == 2) g2d.drawImage(fireImage, j*32, i*32, null);
+				if(value == 3) g2d.drawImage(playerImage, j*32, i*32, null);
+				if(value == 4) g2d.drawImage(treasureImage, j*32, i*32, null);
+				if(value == 5) g2d.drawImage(spiderImage, j*32, i*32, null);
+				if(value == 6) g2d.drawImage(heartImage, j*32, i*32, null);
 			}
 		}
 
-		int column =  (mx-(mx%16))/16;
-		int row =  (my-(my%16))/16;
+		int column =  (mx-(mx%32))/32;
+		int row =  (my-(my%32))/32;
 
 		if(row >= ROWS || column >= COLUMNS) return;
 		
 		g2d.setColor(Color.GREEN);
-		g2d.drawRect(column*16, row*16, 16, 16);
+		g2d.drawRect(column*32, row*32, 32, 32);
 	}
 	
 	public static void main(String[] args) {

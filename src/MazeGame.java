@@ -6,6 +6,7 @@ import java.awt.Image;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
@@ -33,7 +34,7 @@ public class MazeGame extends JPanel implements EventListener{
 	private static int ROWS = -1;
 	private static int COLUMNS = -1;
 	
-	private static final int BLOCKSIZE = 16;
+	private static final int BLOCKSIZE = 32;
 	private boolean loading = true;
 	
 	private static HashMap<GridType, GridBlocks> gridLayers = new HashMap<>();
@@ -156,17 +157,15 @@ public class MazeGame extends JPanel implements EventListener{
 				gridLayers.get(GridType.MONSTERS).trigger(new Event(EventType.TICK), this);
 			} catch (PreventDefaultException e) {}
 			
-			repaint();
-			
-			try { Thread.sleep(paintSleepTime);} catch (InterruptedException e) {}
+			update(this.getGraphics());
 		}
 	}
 	
 	int x = 0;
 	public void paint(Graphics g) {
-		super.paint(g);
-		
-		Graphics2D g2d = (Graphics2D) g;
+		BufferedImage image = new BufferedImage(SCREEN_W, SCREEN_H, BufferedImage.TYPE_INT_RGB);
+		Graphics2D g2d = image.createGraphics();
+		super.paint(g2d);
 
 		if(loading) return;
 			
@@ -189,6 +188,9 @@ public class MazeGame extends JPanel implements EventListener{
 		
 		g2d.setColor(Color.BLACK);
 		g2d.drawString((int)player.getHP()+"/"+(int)player.getMaxHP(), 45, SCREEN_H-5);
+		
+		Graphics2D g2d_final = (Graphics2D) g;
+		g2d_final.drawImage(image, 0, 0, null);
 	}
 	
 	@Override
