@@ -113,19 +113,19 @@ public class MazeGame extends JPanel implements EventListener{
 					for(int i = 0; i < line.length(); i ++) {
 						String c = line.substring(i, i+1);
 						if(c.equals("1")) wallsGrid.addBlock(new WallBlock(row-2, i, wallImage, this));
-						if(c.equals("2")) trapsGrid.addBlock(new Lava(row-2, i, fireImage, this));
-						if(c.equals("3")) player = new Player(row-2, i, playerImage, this);
-						if(c.equals("4")) bonusGrid.addBlock(new Treasure(row-2, i, treasureImage, this));
-						if(c.equals("5")) monsterGrid.addBlock(new Spider(row-2, i, spiderImage, this));
-						if(c.equals("6")) bonusGrid.addBlock(new Heart(row-2, i, heartImage, this));
+						else if(c.equals("2")) trapsGrid.addBlock(new Lava(row-2, i, fireImage, this));
+						else if(c.equals("3")) player = new Player(row-2, i, playerImage, this);
+						else if(c.equals("4")) bonusGrid.addBlock(new Treasure(row-2, i, treasureImage, this));
+						else if(c.equals("5")) monsterGrid.addBlock(new Spider(row-2, i, spiderImage, this));
+						else if(c.equals("6")) bonusGrid.addBlock(new Heart(row-2, i, heartImage, this));
 					}
 				}
 				row += 1;
 			}	
-		} catch (IOException e) {
+		} catch (IOException | NumberFormatException  e) {
 			JOptionPane.showMessageDialog(null, "Error loading map.", "Error", JOptionPane.ERROR_MESSAGE);
 			System.exit(1);
-		}
+		} 
 
 		for (int i = 0; i < ROWS; i++) {
 			for (int j = 0; j < COLUMNS; j++) {
