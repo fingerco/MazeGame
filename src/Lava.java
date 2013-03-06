@@ -6,7 +6,10 @@ import java.util.HashMap;
 public class Lava extends Block {
 	private Image img;
 	private int BURN = 1;
-
+	private boolean readyToBurn = true;
+	private int burnCD = 100;
+	private long lastBurn = 0;
+	
 	private int animSpeed = 500;
 	private int sprites;
 	private int currSprite = 1;
@@ -34,7 +37,12 @@ public class Lava extends Block {
 	
 	private void onTick(EventListener sender) throws PreventDefaultException {
 		long newTime = System.currentTimeMillis();
+		readyToBurn = false;
 		
+		if(newTime - lastBurn > burnCD) {
+			readyToBurn = true;
+			lastBurn = newTime;
+		}
 		if(newTime - lastTime < animSpeed) return;
 		
 		lastTime = newTime;
@@ -56,7 +64,7 @@ public class Lava extends Block {
 			damage.put("damage", BURN);
 			
 			Event ev = new Event(EventType.TAKE_DAMAGE, damage);
-			sender.trigger(ev, this);
+			if(readyToBurn) sender.trigger(ev, this);
 		}
 		else if(event.type == EventType.TICK) {
 			onTick(sender);

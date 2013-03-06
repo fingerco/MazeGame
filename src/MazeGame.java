@@ -47,6 +47,7 @@ public class MazeGame extends JPanel implements EventListener{
 	private static Image wallImage;
 	private static Image fireImage;
 	private static Image treasureImage;
+	private static Image heartIcon;
 	private static Image heartImage;
 	private static Image spiderImage;
 	
@@ -56,7 +57,7 @@ public class MazeGame extends JPanel implements EventListener{
 		loading = false;
 		
 		SCREEN_W = COLUMNS*BLOCKSIZE;
-		SCREEN_H = ROWS*BLOCKSIZE+20;
+		SCREEN_H = ROWS*BLOCKSIZE+40;
 		setPreferredSize(new Dimension(SCREEN_W, SCREEN_H));
 		
 		JFrame frame = new JFrame("Maze Game");
@@ -81,6 +82,7 @@ public class MazeGame extends JPanel implements EventListener{
 		fireImage = new ImageIcon(path+"images/fireImageSheet.png").getImage();
 		treasureImage = new ImageIcon(path+"images/treasureImage.png").getImage();
 		heartImage = new ImageIcon(path+"images/heartImageSheet.png").getImage();
+		heartIcon = new ImageIcon(path+"images/heartImage.png").getImage();
 		spiderImage = new ImageIcon(path+"images/spiderImage.png").getImage();
 		
 		String name = JOptionPane.showInputDialog("Map Name: "); 
@@ -181,17 +183,17 @@ public class MazeGame extends JPanel implements EventListener{
 			g2d.drawImage(gridLayers.get(GridType.PLAYERS).getImage(), 0, 0, null);
 	    }
 		g2d.setColor(Color.GRAY);
-		g2d.drawLine(0, SCREEN_H-20, SCREEN_W, SCREEN_H-20);
-		
-		g2d.drawImage(heartImage, 2, SCREEN_H-18, null);
+		g2d.drawLine(0, SCREEN_H-40, SCREEN_W, SCREEN_H-40);
+
+		g2d.drawImage(heartIcon, 4, SCREEN_H-36, null);
 		
 		g2d.setColor(Color.RED);
-		g2d.fill(new Rectangle2D.Double(20, SCREEN_H-15, 100, 12));
+		g2d.fill(new Rectangle2D.Double(40, SCREEN_H-30, 100, 20));
 		g2d.setColor(Color.GREEN);
-		g2d.fill(new Rectangle2D.Double(20, SCREEN_H-15, 100*(player.getHP()/player.getMaxHP()), 12));
+		g2d.fill(new Rectangle2D.Double(40, SCREEN_H-30, 100*(player.getHP()/player.getMaxHP()), 20));
 		
 		g2d.setColor(Color.BLACK);
-		g2d.drawString((int)player.getHP()+"/"+(int)player.getMaxHP(), 45, SCREEN_H-5);
+		g2d.drawString((int)player.getHP()+"/"+(int)player.getMaxHP(), 65, SCREEN_H-15);
 		
 		Graphics2D g2d_final = (Graphics2D) g;
 		g2d_final.drawImage(image, 0, 0, null);

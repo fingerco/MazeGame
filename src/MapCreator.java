@@ -33,8 +33,8 @@ public class MapCreator extends JPanel {
 	
 	private static final long serialVersionUID = 5365881360950287615L;
 	
-	private static int ROWS = 24;
-	private static int COLUMNS = 32;
+	private static int ROWS = 12;
+	private static int COLUMNS = 16;
 	
 	private static int mx = 0;
 	private static int my = 0;
