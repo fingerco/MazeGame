@@ -86,6 +86,7 @@ public class MazeGame extends JPanel implements EventListener{
 		spiderImage = new ImageIcon(path+"images/spiderImage.png").getImage();
 		
 		String name = JOptionPane.showInputDialog("Map Name: "); 
+		if(name == null) System.exit(1);
 		
 		try {
 			FileInputStream fstream = new FileInputStream(path+"maps/"+name+".cyan");
