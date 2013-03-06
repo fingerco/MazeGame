@@ -12,6 +12,8 @@ public class GridStaticBlocks extends GridBlocks {
 	
 	private int rows;
 	private int columns;
+	private boolean unchanged;
+	private BufferedImage cached_image;
 	
 	GridStaticBlocks() {
 		this(16, 16, 10, 10);
@@ -22,6 +24,7 @@ public class GridStaticBlocks extends GridBlocks {
 	}
 
 	GridStaticBlocks(int blockWidth, int blockHeight, int rows, int columns) {
+		this.unchanged = false;
 		this.blockWidth = blockWidth;
 		this.blockHeight = blockHeight;
 		
@@ -33,6 +36,8 @@ public class GridStaticBlocks extends GridBlocks {
 	
 	@Override
 	public void trigger(Event event, EventListener sender) throws PreventDefaultException{
+		this.unchanged = false;
+		
 		if(event.type == EventType.WALK) {
 			int row = (int)event.args.get("row");
 			int column = (int)event.args.get("column");
@@ -98,6 +103,10 @@ public class GridStaticBlocks extends GridBlocks {
 	}
 
 	public BufferedImage getImage() {
+		if(this.unchanged) {
+			return this.cached_image;
+		}
+		
 		BufferedImage image = new BufferedImage(columns*blockWidth, rows*blockHeight, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g = image.createGraphics();
 		g.setBackground(new Color(0,0,0,0));
@@ -117,6 +126,8 @@ public class GridStaticBlocks extends GridBlocks {
 			}
 		}
 
+		this.cached_image = image;
+		this.unchanged = true;
 		return image;
 	}
 	
@@ -125,10 +136,12 @@ public class GridStaticBlocks extends GridBlocks {
 	}
 	
 	public void addBlock(Block block) {
+		this.unchanged = false;
 		blocks[block.getRow()][block.getColumn()] = block;
 	}
 	
 	public void removeBlock(Block block) {
+		this.unchanged = false;
 		if(block != null) blocks[block.getRow()][block.getColumn()] = null;
 	}
 	

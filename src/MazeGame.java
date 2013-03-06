@@ -149,15 +149,20 @@ public class MazeGame extends JPanel implements EventListener{
 		try { player.trigger(ev, MazeGame.this); } catch (PreventDefaultException e1) {}
 		
 		while(true) {
+
 			if(!isFocusOwner()) requestFocusInWindow();
 			
-			try {
-				gridLayers.get(GridType.TRAPS).trigger(new Event(EventType.TICK), this);
-				gridLayers.get(GridType.PLAYERS).trigger(new Event(EventType.TICK), this);
-				gridLayers.get(GridType.MONSTERS).trigger(new Event(EventType.TICK), this);
-			} catch (PreventDefaultException e) {}
-			
-			update(this.getGraphics());
+		    synchronized(this){
+
+				try {
+					gridLayers.get(GridType.TRAPS).trigger(new Event(EventType.TICK), this);
+					gridLayers.get(GridType.PLAYERS).trigger(new Event(EventType.TICK), this);
+					gridLayers.get(GridType.MONSTERS).trigger(new Event(EventType.TICK), this);
+				} catch (PreventDefaultException e) {}
+			    
+			    
+				repaint();
+		    }
 		}
 	}
 	
@@ -168,14 +173,15 @@ public class MazeGame extends JPanel implements EventListener{
 		super.paint(g2d);
 
 		if(loading) return;
-			
-		g2d.drawImage(gridLayers.get(GridType.FLOOR).getImage(), 0, 0, null);
-		g2d.drawImage(gridLayers.get(GridType.WALLS).getImage(), 0, 0, null);
-		g2d.drawImage(gridLayers.get(GridType.TRAPS).getImage(), 0, 0, null);
-		g2d.drawImage(gridLayers.get(GridType.BONUS).getImage(), 0, 0, null);
-		g2d.drawImage(gridLayers.get(GridType.MONSTERS).getImage(), 0, 0, null);
-		g2d.drawImage(gridLayers.get(GridType.PLAYERS).getImage(), 0, 0, null);
-		
+
+	    synchronized(this){
+			g2d.drawImage(gridLayers.get(GridType.FLOOR).getImage(), 0, 0, null);
+			g2d.drawImage(gridLayers.get(GridType.WALLS).getImage(), 0, 0, null);
+			g2d.drawImage(gridLayers.get(GridType.TRAPS).getImage(), 0, 0, null);
+			g2d.drawImage(gridLayers.get(GridType.BONUS).getImage(), 0, 0, null);
+			g2d.drawImage(gridLayers.get(GridType.MONSTERS).getImage(), 0, 0, null);
+			g2d.drawImage(gridLayers.get(GridType.PLAYERS).getImage(), 0, 0, null);
+	    }
 		g2d.setColor(Color.GRAY);
 		g2d.drawLine(0, SCREEN_H-20, SCREEN_W, SCREEN_H-20);
 		
