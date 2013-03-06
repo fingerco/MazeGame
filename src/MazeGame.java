@@ -27,11 +27,7 @@ public class MazeGame extends JPanel implements EventListener{
 	private static int SCREEN_W = 800;
 	private static int SCREEN_H = 600;
 	
-	// I shall comment this line and commit to see if it works!
-	//private static int paintSleepTime = 25;
-	// WORK!
 	private static Player player;
-
 	private static int ROWS = -1;
 	private static int COLUMNS = -1;
 	
