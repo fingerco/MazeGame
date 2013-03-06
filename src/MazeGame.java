@@ -110,7 +110,7 @@ public class MazeGame extends JPanel implements EventListener{
 					for(int i = 0; i < line.length(); i ++) {
 						String c = line.substring(i, i+1);
 						if(c.equals("1")) wallsGrid.addBlock(new WallBlock(row-2, i, wallImage, this));
-						if(c.equals("2")) trapsGrid.addBlock(new FireBlock(row-2, i, fireImage, this));
+						if(c.equals("2")) trapsGrid.addBlock(new Lava(row-2, i, fireImage, this));
 						if(c.equals("3")) player = new Player(row-2, i, playerImage, this);
 						if(c.equals("4")) bonusGrid.addBlock(new Treasure(row-2, i, treasureImage, this));
 						if(c.equals("5")) monsterGrid.addBlock(new Spider(row-2, i, spiderImage, this));
