@@ -1,5 +1,5 @@
 import java.awt.Image;
-// test
+
 abstract public class Block implements EventListener {
 	protected int column;
 	protected int row;
