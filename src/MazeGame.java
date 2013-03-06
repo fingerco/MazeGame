@@ -29,7 +29,7 @@ public class MazeGame extends JPanel implements EventListener{
 	
 	// I shall comment this line and commit to see if it works!
 	//private static int paintSleepTime = 25;
-
+	// WORK!
 	private static Player player;
 
 	private static int ROWS = -1;
