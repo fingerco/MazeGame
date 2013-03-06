@@ -56,8 +56,8 @@ public class MazeGame extends JPanel implements EventListener{
 		loadMap(getClass().getClassLoader().getResource("").getPath());
 		loading = false;
 		
-		SCREEN_W = COLUMNS*BLOCKSIZE;
-		SCREEN_H = ROWS*BLOCKSIZE+40;
+		//SCREEN_W = COLUMNS*BLOCKSIZE;
+		//SCREEN_H = ROWS*BLOCKSIZE+40;
 		setPreferredSize(new Dimension(SCREEN_W, SCREEN_H));
 		
 		JFrame frame = new JFrame("Maze Game");
@@ -176,12 +176,15 @@ public class MazeGame extends JPanel implements EventListener{
 		if(loading) return;
 
 	    synchronized(this){
-			g2d.drawImage(gridLayers.get(GridType.FLOOR).getImage(), 0, 0, null);
-			g2d.drawImage(gridLayers.get(GridType.WALLS).getImage(), 0, 0, null);
-			g2d.drawImage(gridLayers.get(GridType.TRAPS).getImage(), 0, 0, null);
-			g2d.drawImage(gridLayers.get(GridType.BONUS).getImage(), 0, 0, null);
-			g2d.drawImage(gridLayers.get(GridType.MONSTERS).getImage(), 0, 0, null);
-			g2d.drawImage(gridLayers.get(GridType.PLAYERS).getImage(), 0, 0, null);
+	    	int xOffset = getOffset(player.getColumn(), 13,COLUMNS);
+	    	int yOffset = getOffset(player.getRow(), 9, ROWS);
+	    	
+			g2d.drawImage(gridLayers.get(GridType.FLOOR).getImage(), -xOffset, -yOffset, null);
+			g2d.drawImage(gridLayers.get(GridType.WALLS).getImage(), -xOffset, -yOffset, null);
+			g2d.drawImage(gridLayers.get(GridType.TRAPS).getImage(), -xOffset, -yOffset, null);
+			g2d.drawImage(gridLayers.get(GridType.BONUS).getImage(), -xOffset, -yOffset, null);
+			g2d.drawImage(gridLayers.get(GridType.MONSTERS).getImage(), -xOffset, -yOffset, null);
+			g2d.drawImage(gridLayers.get(GridType.PLAYERS).getImage(), -xOffset, -yOffset, null);
 	    }
 		g2d.setColor(Color.GRAY);
 		g2d.drawLine(0, SCREEN_H-40, SCREEN_W, SCREEN_H-40);
@@ -200,7 +203,16 @@ public class MazeGame extends JPanel implements EventListener{
 		g2d_final.drawImage(image, 0, 0, null);
 	}
 	
-	@Override
+	private int getOffset(int location, int tolerance, int max) {
+		int offset = location;
+
+    	if(offset <= tolerance) offset = 0;
+    	else if(offset > max-tolerance) offset = max-tolerance*2+1;
+    	else offset -= tolerance;
+
+    	return offset*BLOCKSIZE;
+	}
+	
 	public void trigger(Event event, EventListener sender)  throws PreventDefaultException{
 		for(GridType type : gridLayers.keySet()){ 
 			if(event.type == EventType.DESTROY_ME) {
