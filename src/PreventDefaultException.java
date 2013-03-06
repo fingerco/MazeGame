@@ -1,5 +1,5 @@
 
-public class PreventDefaultException extends Exception{
+public class PreventDefaultException extends Exception {
 
 	private static final long serialVersionUID = -7902829951046680112L;
 	

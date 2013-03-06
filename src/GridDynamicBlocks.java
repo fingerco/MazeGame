@@ -1,8 +1,6 @@
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-
 
 public class GridDynamicBlocks extends GridBlocks {
 	private ArrayList<Block> blocks = new ArrayList<>();
@@ -14,11 +12,11 @@ public class GridDynamicBlocks extends GridBlocks {
 	private int columns;
 	
 	GridDynamicBlocks() {
-		this(16, 16, 10, 10);
+		this(32, 32, 16, 16);
 	}
 	
 	GridDynamicBlocks(int rows, int columns) {
-		this(16, 16, rows, columns);
+		this(32, 32, rows, columns);
 	}
 
 	GridDynamicBlocks(int blockWidth, int blockHeight, int rows, int columns) {
@@ -41,8 +39,7 @@ public class GridDynamicBlocks extends GridBlocks {
 	public BufferedImage getImage() {
 		BufferedImage image = new BufferedImage(columns*blockWidth, rows*blockHeight, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g = image.createGraphics();
-		g.setBackground(new Color(0,0,0,0));
-		
+
 		for (Block block : blocks) {
 			if(block.state == BlockState.VISIBLE) {
 				g.drawImage(block.getImage(), block.getColumn()*blockWidth, block.getRow()*blockHeight, null);
@@ -52,7 +49,6 @@ public class GridDynamicBlocks extends GridBlocks {
 		return image;
 	}
 
-	@Override
 	public void trigger(Event event, EventListener sender) throws PreventDefaultException{
 		if(event.type == EventType.WALK) {
 			int row = (int)event.args.get("row");
@@ -116,6 +112,5 @@ public class GridDynamicBlocks extends GridBlocks {
 			
 			removeBlock(block);
 		}
-		
 	}
 }

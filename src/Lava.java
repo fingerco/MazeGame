@@ -12,9 +12,9 @@ public class Lava extends Block {
 	
 	private int animSpeed = 500;
 	private int sprites;
-	private int currSprite = 1;
+	private int currSprite = 0;
 	
-	private long lastTime = System.currentTimeMillis();
+	private long lastTickTime = System.currentTimeMillis();
 	
 	Lava(int row, int column, Image img, EventListener parent) {
 		this.row = row;
@@ -30,7 +30,7 @@ public class Lava extends Block {
 	public Image getImage() {
 		BufferedImage buff = new BufferedImage(32, 32, BufferedImage.TYPE_INT_RGB);
 		Graphics2D g = buff.createGraphics();
-		g.drawImage(img, -32*(currSprite-1), 0, null);
+		g.drawImage(img, -32*currSprite, 0, null);
 
 		return buff;
 	}
@@ -43,14 +43,13 @@ public class Lava extends Block {
 			readyToBurn = true;
 			lastBurn = newTime;
 		}
-		if(newTime - lastTime < animSpeed) return;
+		if(newTime - lastTickTime < animSpeed) return;
 		
-		lastTime = newTime;
+		lastTickTime = newTime;
 		currSprite += 1;
-		if(currSprite > sprites) currSprite = 1;
+		currSprite %= sprites;
 	}
 
-	@Override
 	public void trigger(Event event, EventListener sender) throws PreventDefaultException {
 		if(event.type == EventType.WALK) {
 			HashMap<String, Object> damage = new HashMap<>();

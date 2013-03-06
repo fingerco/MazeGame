@@ -5,7 +5,7 @@ import java.util.HashMap;
 public class Spider extends Block {
 
 	private int walkDelay = 300;
-	private long lastTime = System.currentTimeMillis();
+	private long lastTickTime = System.currentTimeMillis();
 	private boolean left = true;
 
 	private int DAMAGE = 25;
@@ -26,11 +26,11 @@ public class Spider extends Block {
 	}
 	
 	private void onTick(EventListener sender) throws PreventDefaultException {
-		long currTime = System.currentTimeMillis();
+		long newTickTime = System.currentTimeMillis();
 		
-		if(currTime-lastTime < walkDelay) return;
+		if(newTickTime-lastTickTime < walkDelay) return;
 		
-		lastTime = currTime;
+		lastTickTime = newTickTime;
 		
 		HashMap<String, Object> coordinates = new HashMap<>();
 		coordinates.put("row", row);
@@ -54,7 +54,6 @@ public class Spider extends Block {
 		sender.trigger(new Event(EventType.UPDATE_VISION), this);
 	}
 
-	@Override
 	public void trigger(Event event, EventListener sender) throws PreventDefaultException {
 		if(event.type == EventType.WALK) {
 

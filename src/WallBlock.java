@@ -18,7 +18,9 @@ public class WallBlock extends Block {
 
 	@Override
 	public void trigger(Event event, EventListener sender) throws PreventDefaultException {
-		if(event.type == EventType.WALK) throw new PreventDefaultException();
+		if(event.type == EventType.WALK) {
+			throw new PreventDefaultException();
+		}
 		else if(event.type == EventType.TRY_TO_SEE) {
 			throw new PreventDefaultException();
 		}

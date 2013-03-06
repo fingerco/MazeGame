@@ -63,7 +63,6 @@ public class Player extends Block {
 		}
 	}
 	
-	@Override
 	public void trigger(Event event, EventListener sender) throws PreventDefaultException {
 		if(event.type == EventType.MOVE_LEFT) {
 			HashMap<String, Object> coordinates = new HashMap<>();
@@ -138,6 +137,5 @@ public class Player extends Block {
 		else if(event.type == EventType.SPAWN) {
 			updateVision(sender);
 		}
-
 	}
 }
