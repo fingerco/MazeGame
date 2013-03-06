@@ -80,7 +80,7 @@ public class MazeGame extends JPanel implements EventListener{
 		wallImage = new ImageIcon(path+"images/wallImage.png").getImage();
 		fireImage = new ImageIcon(path+"images/fireImageSheet.png").getImage();
 		treasureImage = new ImageIcon(path+"images/treasureImage.png").getImage();
-		heartImage = new ImageIcon(path+"images/heartImage.png").getImage();
+		heartImage = new ImageIcon(path+"images/heartImageSheet.png").getImage();
 		spiderImage = new ImageIcon(path+"images/spiderImage.png").getImage();
 		
 		String name = JOptionPane.showInputDialog("Map Name: "); 
@@ -153,6 +153,7 @@ public class MazeGame extends JPanel implements EventListener{
 
 				try {
 					gridLayers.get(GridType.TRAPS).trigger(new Event(EventType.TICK), this);
+					gridLayers.get(GridType.BONUS).trigger(new Event(EventType.TICK), this);
 					gridLayers.get(GridType.PLAYERS).trigger(new Event(EventType.TICK), this);
 					gridLayers.get(GridType.MONSTERS).trigger(new Event(EventType.TICK), this);
 				} catch (PreventDefaultException e) {}
