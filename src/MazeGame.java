@@ -19,7 +19,6 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-
 public class MazeGame extends JPanel implements EventListener{
 
 	private static final long serialVersionUID = 3896314035336100692L;
