@@ -19,7 +19,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-public class MazeGame extends JPanel implements EventListener{
+public class MazeGame extends JPanel implements EventListener {
 
 	private static final long serialVersionUID = 3896314035336100692L;
 	
@@ -50,18 +50,20 @@ public class MazeGame extends JPanel implements EventListener{
 	private static Image heartImage;
 	private static Image spiderImage;
 	
+	private static MiniMap minimap;
+	
 	MazeGame() {
+		
 		loading = true;
 		loadMap(getClass().getClassLoader().getResource("").getPath());
 		loading = false;
 		
-		//SCREEN_W = COLUMNS*BLOCKSIZE;
-		//SCREEN_H = ROWS*BLOCKSIZE+40;
 		setPreferredSize(new Dimension(SCREEN_W, SCREEN_H));
-		
+
 		JFrame frame = new JFrame("Maze Game");
-		
+
 		this.addKeyListener(new KeyHandler());
+
 		frame.add(this);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setResizable(false);
@@ -139,6 +141,8 @@ public class MazeGame extends JPanel implements EventListener{
 		gridLayers.put(GridType.BONUS, bonusGrid);
 		gridLayers.put(GridType.MONSTERS, monsterGrid);
 		gridLayers.put(GridType.PLAYERS, playersGrid);
+		
+		minimap = new MiniMap(gridLayers);
 	}
 	
 	private void gameLoop() {
@@ -159,7 +163,6 @@ public class MazeGame extends JPanel implements EventListener{
 					gridLayers.get(GridType.PLAYERS).trigger(new Event(EventType.TICK), this);
 					gridLayers.get(GridType.MONSTERS).trigger(new Event(EventType.TICK), this);
 				} catch (PreventDefaultException e) {}
-			    
 			    
 				repaint();
 		    }
@@ -184,7 +187,9 @@ public class MazeGame extends JPanel implements EventListener{
 			g2d.drawImage(gridLayers.get(GridType.BONUS).getImage(), -xOffset, -yOffset, null);
 			g2d.drawImage(gridLayers.get(GridType.MONSTERS).getImage(), -xOffset, -yOffset, null);
 			g2d.drawImage(gridLayers.get(GridType.PLAYERS).getImage(), -xOffset, -yOffset, null);
+				
 	    }
+	    
 		g2d.setColor(Color.GRAY);
 		g2d.drawLine(0, SCREEN_H-40, SCREEN_W, SCREEN_H-40);
 
@@ -197,6 +202,8 @@ public class MazeGame extends JPanel implements EventListener{
 		
 		g2d.setColor(Color.BLACK);
 		g2d.drawString((int)player.getHP()+"/"+(int)player.getMaxHP(), 65, SCREEN_H-15);
+		
+		g2d.drawImage(minimap.getImage(), SCREEN_W-140, 20, null);
 		
 		Graphics2D g2d_final = (Graphics2D) g;
 		g2d_final.drawImage(image, 0, 0, null);
