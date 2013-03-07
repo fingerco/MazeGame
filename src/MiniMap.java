@@ -23,10 +23,11 @@ public class MiniMap implements Runnable {
 			BufferedImage buff = new BufferedImage(MAP_W, MAP_H, BufferedImage.TYPE_INT_ARGB);
 			Graphics2D g2d = (Graphics2D) buff.getGraphics();
 			
-			g2d.drawImage(gridLayers.get(GridType.FLOOR).getImage().getScaledInstance(MAP_W, MAP_H, 0), 0, 0, null);
-			g2d.drawImage(gridLayers.get(GridType.WALLS).getImage().getScaledInstance(MAP_W, MAP_H, 0), 0, 0, null);
-			g2d.drawImage(gridLayers.get(GridType.PLAYERS).getImage().getScaledInstance(MAP_W, MAP_H, 0), 0, 0, null);
-			
+			synchronized (this) {
+				g2d.drawImage(gridLayers.get(GridType.FLOOR).getImage().getScaledInstance(MAP_W, MAP_H, 0), 0, 0, null);
+				g2d.drawImage(gridLayers.get(GridType.WALLS).getImage().getScaledInstance(MAP_W, MAP_H, 0), 0, 0, null);
+				g2d.drawImage(gridLayers.get(GridType.PLAYERS).getImage().getScaledInstance(MAP_W, MAP_H, 0), 0, 0, null);
+			}
 			g2d.setColor(Color.BLUE);
 			g2d.drawRect(0, 0, MAP_W-1, MAP_H-1);
 			
