@@ -7,8 +7,8 @@ public class MiniMap implements Runnable {
 
 	private HashMap<GridType, GridBlocks> gridLayers = new HashMap<>();
 	
-	private int MAP_W = 120;
-	private int MAP_H = 120;
+	private int MAP_W = 160;
+	private int MAP_H = 125;
 	
 	private BufferedImage img = new BufferedImage(MAP_W, MAP_H, BufferedImage.TYPE_INT_ARGB);
 	

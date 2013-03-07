@@ -203,7 +203,7 @@ public class MazeGame extends JPanel implements EventListener {
 		g2d.setColor(Color.BLACK);
 		g2d.drawString((int)player.getHP()+"/"+(int)player.getMaxHP(), 65, SCREEN_H-15);
 		
-		g2d.drawImage(minimap.getImage(), SCREEN_W-140, 20, null);
+		g2d.drawImage(minimap.getImage(), SCREEN_W-180, 20, null);
 		
 		Graphics2D g2d_final = (Graphics2D) g;
 		g2d_final.drawImage(image, 0, 0, null);
