@@ -3,6 +3,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 
+// TBD, add mouse listener
 public class MiniMap implements Runnable {
 
 	private HashMap<GridType, GridBlocks> gridLayers = new HashMap<>();
@@ -10,10 +11,21 @@ public class MiniMap implements Runnable {
 	private int MAP_W = 160;
 	private int MAP_H = 125;
 	
+	private int x = 0;
+	private int y = 0;
+
 	private BufferedImage img = new BufferedImage(MAP_W, MAP_H, BufferedImage.TYPE_INT_ARGB);
 	
 	MiniMap(HashMap<GridType, GridBlocks> gridLayers) {
+		this(gridLayers, 0, 0);
+	}
+	
+	MiniMap(HashMap<GridType, GridBlocks> gridLayers, int x, int y) {
 		this.gridLayers = gridLayers;
+		
+		this.x = x;
+		this.y = y;
+		
 		Thread t = new Thread(this);
 		t.start();
 	}
@@ -38,5 +50,13 @@ public class MiniMap implements Runnable {
 	
 	public BufferedImage getImage() {
 		return img;
+	}
+	
+	public int getX() {
+		return x;
+	}
+	
+	public int getY() {
+		return y;
 	}
 }

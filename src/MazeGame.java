@@ -51,6 +51,7 @@ public class MazeGame extends JPanel implements EventListener {
 	private static Image spiderImage;
 	
 	private static MiniMap minimap;
+	private static boolean minimapEnabled = true;
 	
 	MazeGame() {
 		
@@ -59,6 +60,8 @@ public class MazeGame extends JPanel implements EventListener {
 		loading = false;
 		
 		setPreferredSize(new Dimension(SCREEN_W, SCREEN_H));
+		setSize(new Dimension(SCREEN_W, SCREEN_H));
+		//setBounds(0, 0, SCREEN_W, SCREEN_H);
 
 		JFrame frame = new JFrame("Maze Game");
 
@@ -142,7 +145,7 @@ public class MazeGame extends JPanel implements EventListener {
 		gridLayers.put(GridType.MONSTERS, monsterGrid);
 		gridLayers.put(GridType.PLAYERS, playersGrid);
 		
-		minimap = new MiniMap(gridLayers);
+		minimap = new MiniMap(gridLayers, SCREEN_W-180, 20);
 	}
 	
 	private void gameLoop() {
@@ -187,7 +190,6 @@ public class MazeGame extends JPanel implements EventListener {
 			g2d.drawImage(gridLayers.get(GridType.BONUS).getImage(), -xOffset, -yOffset, null);
 			g2d.drawImage(gridLayers.get(GridType.MONSTERS).getImage(), -xOffset, -yOffset, null);
 			g2d.drawImage(gridLayers.get(GridType.PLAYERS).getImage(), -xOffset, -yOffset, null);
-				
 	    }
 	    
 		g2d.setColor(Color.GRAY);
@@ -203,7 +205,7 @@ public class MazeGame extends JPanel implements EventListener {
 		g2d.setColor(Color.BLACK);
 		g2d.drawString((int)player.getHP()+"/"+(int)player.getMaxHP(), 65, SCREEN_H-15);
 		
-		g2d.drawImage(minimap.getImage(), SCREEN_W-180, 20, null);
+		if(minimapEnabled) g2d.drawImage(minimap.getImage(), minimap.getX(), minimap.getY(), null);
 		
 		Graphics2D g2d_final = (Graphics2D) g;
 		g2d_final.drawImage(image, 0, 0, null);
@@ -246,6 +248,9 @@ public class MazeGame extends JPanel implements EventListener {
 				else if(e.getKeyCode() == KeyEvent.VK_DOWN) {
 					Event ev = new Event(EventType.MOVE_DOWN);
 					player.trigger(ev, MazeGame.this);
+				} 
+				else if(e.getKeyCode() == KeyEvent.VK_M) {
+					minimapEnabled = !minimapEnabled;
 				} 
 			} catch (PreventDefaultException ex) {
 			}
