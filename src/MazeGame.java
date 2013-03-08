@@ -5,6 +5,8 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
@@ -66,6 +68,7 @@ public class MazeGame extends JPanel implements EventListener {
 		JFrame frame = new JFrame("Maze Game");
 
 		this.addKeyListener(new KeyHandler());
+		this.addMouseListener(new MouseHandler());
 
 		frame.add(this);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -263,6 +266,25 @@ public class MazeGame extends JPanel implements EventListener {
 				
 			}
 		}
+	}
+	
+	private class MouseHandler extends MouseAdapter {
+		// e.getX(), e.getY(), e.getButton() (1 left, 2 middle, 3 right)
+		public void mousePressed(MouseEvent e) {
+			//try {
+				//Stuff
+			System.out.println("MOUSE PRESSED => Button: "+e.getButton()+" X:"+e.getX()+" Y:"+e.getY());
+			//} catch (PreventDefaultException ex) {}
+
+		}
+		public void mouseReleased(MouseEvent e) {
+			//try {
+				// Stuff
+			System.out.println("MOUSE RELEASED => Button: "+e.getButton()+" X:"+e.getX()+" Y:"+e.getY());
+			//} catch (PreventDefaultException ex) {}
+
+		}
+
 	}
 	
 	public static void main(String[] args) {
