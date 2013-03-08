@@ -74,6 +74,8 @@ public class Spider extends Block {
 		}
 		else if(event.type == EventType.SEE) {
 			state = BlockState.VISIBLE; 
+		} else {
+			super.trigger(event, sender);
 		}
 	}
 }

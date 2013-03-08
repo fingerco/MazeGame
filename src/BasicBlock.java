@@ -11,12 +11,14 @@ public class BasicBlock extends Block {
 		this.parent = parent;
 	}
 	
-	public void trigger(Event event, EventListener sender) {
+	public void trigger(Event event, EventListener sender) throws PreventDefaultException {
 		if(event.type == EventType.TRY_TO_SEE) {
 			
 		}
 		else if(event.type == EventType.SEE) {
 			state = BlockState.VISIBLE; 
+		} else {
+			super.trigger(event, sender);
 		}
 	}
 

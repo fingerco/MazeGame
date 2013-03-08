@@ -1,8 +1,8 @@
 import java.util.ArrayList;
 
 
-public class ItemBag extends Bag<Item> {
-	private ArrayList<Item> items[][];
+public class ItemBag extends Bag<Carryable> {
+	private ArrayList<Carryable> items[][];
 	private int rows;
 	private int columns;
 
@@ -14,21 +14,35 @@ public class ItemBag extends Bag<Item> {
 		
 		for(int i = 0; i < columns; i++) {
 			for(int j = 0; j < rows; j++) {
-				items[i][j] = new ArrayList<Item>();
+				items[i][j] = new ArrayList<Carryable>();
 			}
 		}
 	}
 
 	@Override
-	public void add(Item object, int row, int column) {
+	public void add(Carryable object, int row, int column) {
 		items[row][column].add(object);
 		
 	}
 
 	@Override
-	public void remove(Item object, int row, int column) {
+	public void remove(Carryable object, int row, int column) {
 		items[row][column].remove(object);
-		
+	}
+
+	@Override
+	public void trigger(Event event, EventListener sender) throws PreventDefaultException {
+		if(event.type == EventType.LEFT_CLICK_ITEM || event.type == EventType.RIGHT_CLICK_ITEM) {
+			int row = (int)event.args.get("row");
+			int column = (int)event.args.get("column");
+			
+			if(items[row][column].isEmpty()) return;
+			
+			Carryable item = items[row][column].get(0);
+			item.trigger(event, sender);
+		} else {
+			super.trigger(event, sender);
+		}
 	}
 
 }

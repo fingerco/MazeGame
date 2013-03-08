@@ -136,6 +136,8 @@ public class Player extends Block {
 		}
 		else if(event.type == EventType.SPAWN) {
 			updateVision(sender);
+		} else {
+			super.trigger(event, sender);
 		}
 	}
 }
