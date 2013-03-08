@@ -3,17 +3,20 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 
-public class Heart extends Block {
-
+public class Lava extends Block {
 	private Image img;
+	private int BURN = 1;
+	private boolean readyToBurn = true;
+	private int burnCD = 100;
+	private long lastBurn = 0;
 	
-	private int animSpeed = 400;
+	private int animSpeed = 500;
 	private int sprites;
 	private int currSprite = 0;
 	
 	private long lastTickTime = System.currentTimeMillis();
-
-	Heart(int row, int column, Image img, EventListener parent) {
+	
+	Lava(int row, int column, Image img, EventListener parent) {
 		this.row = row;
 		this.column = column;
 		this.img = img;
@@ -25,7 +28,7 @@ public class Heart extends Block {
 	
 	@Override
 	public Image getImage() {
-		BufferedImage buff = new BufferedImage(32, 32, BufferedImage.TYPE_INT_ARGB);
+		BufferedImage buff = new BufferedImage(32, 32, BufferedImage.TYPE_INT_RGB);
 		Graphics2D g = buff.createGraphics();
 		g.drawImage(img, -32*currSprite, 0, null);
 
@@ -33,11 +36,16 @@ public class Heart extends Block {
 	}
 	
 	private void onTick(EventListener sender) throws PreventDefaultException {
-		long newTickTime = System.currentTimeMillis();
+		long newTime = System.currentTimeMillis();
+		readyToBurn = false;
 		
-		if(newTickTime - lastTickTime < animSpeed) return;
+		if(newTime - lastBurn > burnCD) {
+			readyToBurn = true;
+			lastBurn = newTime;
+		}
+		if(newTime - lastTickTime < animSpeed) return;
 		
-		lastTickTime = newTickTime;
+		lastTickTime = newTime;
 		currSprite += 1;
 		currSprite %= sprites;
 	}
@@ -45,22 +53,17 @@ public class Heart extends Block {
 	public void trigger(Event event, EventListener sender) throws PreventDefaultException {
 		if(event.type == EventType.WALK) {
 			HashMap<String, Object> damage = new HashMap<>();
-			damage.put("health", 20);
+			damage.put("damage", BURN);
 			
-			Event ev = new Event(EventType.HEAL, damage);
+			Event ev = new Event(EventType.TAKE_DAMAGE, damage);
 			sender.trigger(ev, this);
-			
-			// Now destroy me
-			
-			HashMap<String, Object> destory = new HashMap<>();
-			destory.put("block", this);
-			destory.put("type", GridType.BONUS);
-
-			Event ev2 = new Event(EventType.DESTROY_ME, destory);
-			parent.trigger(ev2, this);
 		}
 		else if(event.type == EventType.STAND) {
-
+			HashMap<String, Object> damage = new HashMap<>();
+			damage.put("damage", BURN);
+			
+			Event ev = new Event(EventType.TAKE_DAMAGE, damage);
+			if(readyToBurn) sender.trigger(ev, this);
 		}
 		else if(event.type == EventType.TICK) {
 			onTick(sender);

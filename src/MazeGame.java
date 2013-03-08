@@ -19,18 +19,14 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-
-public class MazeGame extends JPanel implements EventListener{
+public class MazeGame extends JPanel implements EventListener {
 
 	private static final long serialVersionUID = 3896314035336100692L;
 	
 	private static int SCREEN_W = 800;
 	private static int SCREEN_H = 600;
 	
-	private static int paintSleepTime = 25;
-
 	private static Player player;
-
 	private static int ROWS = -1;
 	private static int COLUMNS = -1;
 	
@@ -50,21 +46,27 @@ public class MazeGame extends JPanel implements EventListener{
 	private static Image wallImage;
 	private static Image fireImage;
 	private static Image treasureImage;
+	private static Image heartIcon;
 	private static Image heartImage;
 	private static Image spiderImage;
 	
+	private static MiniMap minimap;
+	private static boolean minimapEnabled = true;
+	
 	MazeGame() {
+		
 		loading = true;
 		loadMap(getClass().getClassLoader().getResource("").getPath());
 		loading = false;
 		
-		SCREEN_W = COLUMNS*BLOCKSIZE;
-		SCREEN_H = ROWS*BLOCKSIZE+20;
 		setPreferredSize(new Dimension(SCREEN_W, SCREEN_H));
-		
+		setSize(new Dimension(SCREEN_W, SCREEN_H));
+		//setBounds(0, 0, SCREEN_W, SCREEN_H);
+
 		JFrame frame = new JFrame("Maze Game");
-		
+
 		this.addKeyListener(new KeyHandler());
+
 		frame.add(this);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setResizable(false);
@@ -83,10 +85,12 @@ public class MazeGame extends JPanel implements EventListener{
 		wallImage = new ImageIcon(path+"images/wallImage.png").getImage();
 		fireImage = new ImageIcon(path+"images/fireImageSheet.png").getImage();
 		treasureImage = new ImageIcon(path+"images/treasureImage.png").getImage();
-		heartImage = new ImageIcon(path+"images/heartImage.png").getImage();
+		heartImage = new ImageIcon(path+"images/heartImageSheet.png").getImage();
+		heartIcon = new ImageIcon(path+"images/heartImage.png").getImage();
 		spiderImage = new ImageIcon(path+"images/spiderImage.png").getImage();
 		
 		String name = JOptionPane.showInputDialog("Map Name: "); 
+		if(name == null) System.exit(1);
 		
 		try {
 			FileInputStream fstream = new FileInputStream(path+"maps/"+name+".cyan");
@@ -113,19 +117,19 @@ public class MazeGame extends JPanel implements EventListener{
 					for(int i = 0; i < line.length(); i ++) {
 						String c = line.substring(i, i+1);
 						if(c.equals("1")) wallsGrid.addBlock(new WallBlock(row-2, i, wallImage, this));
-						if(c.equals("2")) trapsGrid.addBlock(new FireBlock(row-2, i, fireImage, this));
-						if(c.equals("3")) player = new Player(row-2, i, playerImage, this);
-						if(c.equals("4")) bonusGrid.addBlock(new Treasure(row-2, i, treasureImage, this));
-						if(c.equals("5")) monsterGrid.addBlock(new Spider(row-2, i, spiderImage, this));
-						if(c.equals("6")) bonusGrid.addBlock(new Heart(row-2, i, heartImage, this));
+						else if(c.equals("2")) trapsGrid.addBlock(new Lava(row-2, i, fireImage, this));
+						else if(c.equals("3")) player = new Player(row-2, i, playerImage, this);
+						else if(c.equals("4")) bonusGrid.addBlock(new Treasure(row-2, i, treasureImage, this));
+						else if(c.equals("5")) monsterGrid.addBlock(new Spider(row-2, i, spiderImage, this));
+						else if(c.equals("6")) bonusGrid.addBlock(new Heart(row-2, i, heartImage, this));
 					}
 				}
 				row += 1;
 			}	
-		} catch (IOException e) {
+		} catch (IOException | NumberFormatException  e) {
 			JOptionPane.showMessageDialog(null, "Error loading map.", "Error", JOptionPane.ERROR_MESSAGE);
 			System.exit(1);
-		}
+		} 
 
 		for (int i = 0; i < ROWS; i++) {
 			for (int j = 0; j < COLUMNS; j++) {
@@ -140,6 +144,8 @@ public class MazeGame extends JPanel implements EventListener{
 		gridLayers.put(GridType.BONUS, bonusGrid);
 		gridLayers.put(GridType.MONSTERS, monsterGrid);
 		gridLayers.put(GridType.PLAYERS, playersGrid);
+		
+		minimap = new MiniMap(gridLayers, SCREEN_W-180, 20);
 	}
 	
 	private void gameLoop() {
@@ -156,10 +162,10 @@ public class MazeGame extends JPanel implements EventListener{
 
 				try {
 					gridLayers.get(GridType.TRAPS).trigger(new Event(EventType.TICK), this);
+					gridLayers.get(GridType.BONUS).trigger(new Event(EventType.TICK), this);
 					gridLayers.get(GridType.PLAYERS).trigger(new Event(EventType.TICK), this);
 					gridLayers.get(GridType.MONSTERS).trigger(new Event(EventType.TICK), this);
 				} catch (PreventDefaultException e) {}
-			    
 			    
 				repaint();
 		    }
@@ -175,31 +181,46 @@ public class MazeGame extends JPanel implements EventListener{
 		if(loading) return;
 
 	    synchronized(this){
-			g2d.drawImage(gridLayers.get(GridType.FLOOR).getImage(), 0, 0, null);
-			g2d.drawImage(gridLayers.get(GridType.WALLS).getImage(), 0, 0, null);
-			g2d.drawImage(gridLayers.get(GridType.TRAPS).getImage(), 0, 0, null);
-			g2d.drawImage(gridLayers.get(GridType.BONUS).getImage(), 0, 0, null);
-			g2d.drawImage(gridLayers.get(GridType.MONSTERS).getImage(), 0, 0, null);
-			g2d.drawImage(gridLayers.get(GridType.PLAYERS).getImage(), 0, 0, null);
+	    	int xOffset = getOffset(player.getColumn(), 13,COLUMNS);
+	    	int yOffset = getOffset(player.getRow(), 9, ROWS);
+	    	
+			g2d.drawImage(gridLayers.get(GridType.FLOOR).getImage(), -xOffset, -yOffset, null);
+			g2d.drawImage(gridLayers.get(GridType.WALLS).getImage(), -xOffset, -yOffset, null);
+			g2d.drawImage(gridLayers.get(GridType.TRAPS).getImage(), -xOffset, -yOffset, null);
+			g2d.drawImage(gridLayers.get(GridType.BONUS).getImage(), -xOffset, -yOffset, null);
+			g2d.drawImage(gridLayers.get(GridType.MONSTERS).getImage(), -xOffset, -yOffset, null);
+			g2d.drawImage(gridLayers.get(GridType.PLAYERS).getImage(), -xOffset, -yOffset, null);
 	    }
+	    
 		g2d.setColor(Color.GRAY);
-		g2d.drawLine(0, SCREEN_H-20, SCREEN_W, SCREEN_H-20);
-		
-		g2d.drawImage(heartImage, 2, SCREEN_H-18, null);
+		g2d.drawLine(0, SCREEN_H-40, SCREEN_W, SCREEN_H-40);
+
+		g2d.drawImage(heartIcon, 4, SCREEN_H-36, null);
 		
 		g2d.setColor(Color.RED);
-		g2d.fill(new Rectangle2D.Double(20, SCREEN_H-15, 100, 12));
+		g2d.fill(new Rectangle2D.Double(40, SCREEN_H-30, 100, 20));
 		g2d.setColor(Color.GREEN);
-		g2d.fill(new Rectangle2D.Double(20, SCREEN_H-15, 100*(player.getHP()/player.getMaxHP()), 12));
+		g2d.fill(new Rectangle2D.Double(40, SCREEN_H-30, 100*(player.getHP()/player.getMaxHP()), 20));
 		
 		g2d.setColor(Color.BLACK);
-		g2d.drawString((int)player.getHP()+"/"+(int)player.getMaxHP(), 45, SCREEN_H-5);
+		g2d.drawString((int)player.getHP()+"/"+(int)player.getMaxHP(), 65, SCREEN_H-15);
+		
+		if(minimapEnabled) g2d.drawImage(minimap.getImage(), minimap.getX(), minimap.getY(), null);
 		
 		Graphics2D g2d_final = (Graphics2D) g;
 		g2d_final.drawImage(image, 0, 0, null);
 	}
 	
-	@Override
+	private int getOffset(int location, int tolerance, int max) {
+		int offset = location;
+
+    	if(offset <= tolerance) offset = 0;
+    	else if(offset > max-tolerance) offset = max-tolerance*2+1;
+    	else offset -= tolerance;
+
+    	return offset*BLOCKSIZE;
+	}
+	
 	public void trigger(Event event, EventListener sender)  throws PreventDefaultException{
 		for(GridType type : gridLayers.keySet()){ 
 			if(event.type == EventType.DESTROY_ME) {
@@ -227,6 +248,9 @@ public class MazeGame extends JPanel implements EventListener{
 				else if(e.getKeyCode() == KeyEvent.VK_DOWN) {
 					Event ev = new Event(EventType.MOVE_DOWN);
 					player.trigger(ev, MazeGame.this);
+				} 
+				else if(e.getKeyCode() == KeyEvent.VK_M) {
+					minimapEnabled = !minimapEnabled;
 				} 
 			} catch (PreventDefaultException ex) {
 			}

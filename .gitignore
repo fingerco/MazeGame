@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+*.class
+>>>>>>> a6385f3e1307e3cc2159e3522e2153131001f1f4
 .classpath
 .project
 .DS_Store

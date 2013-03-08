@@ -28,7 +28,7 @@ public class Treasure extends Block {
 			Event ev = new Event(EventType.HEAL, heal);
 			sender.trigger(ev, this);
 			
-			///////////////////////
+			// Now destroy me
 			
 			HashMap<String, Object> destory = new HashMap<>();
 			destory.put("block", this);
@@ -47,5 +47,4 @@ public class Treasure extends Block {
 			state = BlockState.VISIBLE; 
 		}
 	}
-
 }

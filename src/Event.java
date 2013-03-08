@@ -1,6 +1,5 @@
 import java.util.HashMap;
 
-
 public class Event {
 	EventType type;
 	HashMap<String, Object> args = new HashMap<>();

@@ -33,8 +33,8 @@ public class MapCreator extends JPanel {
 	
 	private static final long serialVersionUID = 5365881360950287615L;
 	
-	private static int ROWS = 24;
-	private static int COLUMNS = 32;
+	private static int ROWS = 12;
+	private static int COLUMNS = 16;
 	
 	private static int mx = 0;
 	private static int my = 0;
@@ -108,7 +108,7 @@ public class MapCreator extends JPanel {
 				if(e.getButton() == MouseEvent.BUTTON1){
 					if(currBlock == BlockType.FLOOR) blocks[row][column] = 0;
 					else if(currBlock == BlockType.WALL) blocks[row][column] = 1;
-					else if(currBlock == BlockType.FIRE) blocks[row][column] = 2;
+					else if(currBlock == BlockType.LAVA) blocks[row][column] = 2;
 					else if(currBlock == BlockType.PLAYER) blocks[row][column] = 3;
 					else if(currBlock == BlockType.TREASURE) blocks[row][column] = 4;
 					else if(currBlock == BlockType.SPIDER) blocks[row][column] = 5;
@@ -203,7 +203,7 @@ public class MapCreator extends JPanel {
 		btnWall.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {changeBlock(BlockType.WALL);}});
 		btnFire.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {changeBlock(BlockType.FIRE);}});
+			public void actionPerformed(ActionEvent e) {changeBlock(BlockType.LAVA);}});
 		btnTreasue.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {changeBlock(BlockType.TREASURE);}});
 		btnHeart.addActionListener(new ActionListener() {
@@ -235,7 +235,7 @@ public class MapCreator extends JPanel {
 		
 		if(currBlock == BlockType.FLOOR) btnChangeBlock.setIcon(new ImageIcon(floorImage));
 		else if(currBlock == BlockType.WALL) btnChangeBlock.setIcon(new ImageIcon(wallImage));
-		else if(currBlock == BlockType.FIRE) btnChangeBlock.setIcon(new ImageIcon(fireImage));
+		else if(currBlock == BlockType.LAVA) btnChangeBlock.setIcon(new ImageIcon(fireImage));
 		else if(currBlock == BlockType.PLAYER) btnChangeBlock.setIcon(new ImageIcon(playerImage));
 		else if(currBlock == BlockType.TREASURE) btnChangeBlock.setIcon(new ImageIcon(treasureImage));
 		else if(currBlock == BlockType.HEART) btnChangeBlock.setIcon(new ImageIcon(heartImage));
