@@ -3,6 +3,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Rectangle;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -14,6 +15,7 @@ import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.swing.ImageIcon;
@@ -40,6 +42,7 @@ public class MazeGame extends JPanel implements EventListener {
 	private static GridBlocks wallsGrid;
 	private static GridBlocks trapsGrid;
 	private static GridBlocks bonusGrid;
+	// private static GridBlocks itemGrid;
 	private static GridBlocks monsterGrid;
 	private static GridBlocks playersGrid;
 	
@@ -51,6 +54,8 @@ public class MazeGame extends JPanel implements EventListener {
 	private static Image heartIcon;
 	private static Image heartImage;
 	private static Image spiderImage;
+	private static Image bagPanelImage;
+	private static int bagSize;
 	
 	private static MiniMap minimap;
 	private static boolean minimapEnabled = true;
@@ -92,6 +97,9 @@ public class MazeGame extends JPanel implements EventListener {
 		heartIcon = new ImageIcon(path+"images/heartImage.png").getImage();
 		spiderImage = new ImageIcon(path+"images/spiderImage.png").getImage();
 		
+		bagPanelImage = new ImageIcon(path+"images/bagPanel.png").getImage();
+		bagSize = bagPanelImage.getWidth(null);
+		
 		String name = JOptionPane.showInputDialog("Map Name: "); 
 		if(name == null) System.exit(1);
 		
@@ -113,6 +121,7 @@ public class MazeGame extends JPanel implements EventListener {
 					wallsGrid = new GridStaticBlocks(BLOCKSIZE, BLOCKSIZE, ROWS, COLUMNS);
 					trapsGrid = new GridStaticBlocks(BLOCKSIZE, BLOCKSIZE, ROWS, COLUMNS);
 					bonusGrid = new GridStaticBlocks(BLOCKSIZE, BLOCKSIZE, ROWS, COLUMNS);
+					// itemGrid = new GridStaticBlocks(BLOCKSIZE, BLOCKSIZE, ROWS, COLUMNS);
 					monsterGrid = new GridDynamicBlocks(BLOCKSIZE, BLOCKSIZE, ROWS, COLUMNS);
 					playersGrid = new GridDynamicBlocks(BLOCKSIZE, BLOCKSIZE, ROWS, COLUMNS);
 				}
@@ -145,6 +154,7 @@ public class MazeGame extends JPanel implements EventListener {
 		gridLayers.put(GridType.WALLS, wallsGrid);
 		gridLayers.put(GridType.TRAPS, trapsGrid);
 		gridLayers.put(GridType.BONUS, bonusGrid);
+		// gridLayers.put(GridType.ITEMS, itemGrid);
 		gridLayers.put(GridType.MONSTERS, monsterGrid);
 		gridLayers.put(GridType.PLAYERS, playersGrid);
 		
@@ -191,6 +201,7 @@ public class MazeGame extends JPanel implements EventListener {
 			g2d.drawImage(gridLayers.get(GridType.WALLS).getImage(), -xOffset, -yOffset, null);
 			g2d.drawImage(gridLayers.get(GridType.TRAPS).getImage(), -xOffset, -yOffset, null);
 			g2d.drawImage(gridLayers.get(GridType.BONUS).getImage(), -xOffset, -yOffset, null);
+			// g2d.drawImage(gridLayers.get(GridType.ITEMS).getImage(), -xOffset, -yOffset, null);
 			g2d.drawImage(gridLayers.get(GridType.MONSTERS).getImage(), -xOffset, -yOffset, null);
 			g2d.drawImage(gridLayers.get(GridType.PLAYERS).getImage(), -xOffset, -yOffset, null);
 	    }
@@ -209,6 +220,45 @@ public class MazeGame extends JPanel implements EventListener {
 		g2d.drawString((int)player.getHP()+"/"+(int)player.getMaxHP(), 65, SCREEN_H-15);
 		
 		if(minimapEnabled) g2d.drawImage(minimap.getImage(), minimap.getX(), minimap.getY(), null);
+
+		ArrayList<Bag> bags = player.getBags();
+		for (int i = 0; i < bags.size(); i ++) {
+			Bag<?> bag = bags.get(i);
+			int x = 700-i*bagSize;
+			if (bag.isOpen()) {
+				int rows = bag.getRows();
+				int columns = bag.getColumns();
+				
+				g2d.drawImage(bagPanelImage, x, 500, null);
+				g2d.setColor(new Color(0,0,0,128));
+				g2d.fill(new Rectangle(x, 500, bagSize, bagSize));
+				
+				g2d.setColor(new Color(0,0,255,128));
+				g2d.fill(new Rectangle(x-columns*bagSize+bagSize, 500-rows*bagSize, columns*bagSize, rows*bagSize));
+				
+				ArrayList<Item>[][] items = bag.getItems();
+				for (int row = 0; row < items.length; row++) {
+					for (int column = 0; column < items[row].length; column++) {
+						ArrayList<Item> item = items[row][column];
+					
+						g2d.setColor(new Color(row*25,column*25,row*column*15, 128));
+						g2d.fill(new Rectangle(x-column*64, 500-row*64-64, bagSize, bagSize));
+						
+						if(item.size() > 0) {
+							g2d.drawImage(item.get(0).getImage(), x-column*64, 500-row*64-64, null);
+							if(item.size() >1) {
+								g2d.setColor(Color.WHITE);
+								g2d.drawString(item.size()+"", x-column*64, 500-row*64);
+							}
+						}
+					}
+				}
+
+			}
+			else {
+				g2d.drawImage(bagPanelImage, x, 500, null);
+			}
+		}
 		
 		Graphics2D g2d_final = (Graphics2D) g;
 		g2d_final.drawImage(image, 0, 0, null);
@@ -268,9 +318,59 @@ public class MazeGame extends JPanel implements EventListener {
 		}
 	}
 	
+	
+	
 	private class MouseHandler extends MouseAdapter {
+		private boolean mouseOnBag(int x, int y) {
+			int bags = player.getBags().size();
+			
+			int top = 500;
+			int bot = top+bagSize;
+
+			int right = 700+bagSize;
+			int left = right-bags*bagSize;
+			
+			return (x >= left && x <= right && y <= bot && y >= top);
+		}
+		private boolean mouseOnItem(int x, int y, int bagNum, int rows, int columns) {
+
+			int bot = 500;
+			int top = bot-rows*bagSize;
+			
+			int right = 700+bagSize-bagNum*bagSize;
+			int left = right-columns*bagSize;
+			
+			return (x >= left && x <= right && y <= bot && y >= top);
+		}
+		
 		// e.getX(), e.getY(), e.getButton() (1 left, 2 middle, 3 right)
 		public void mousePressed(MouseEvent e) {
+			if(mouseOnBag(e.getX(), e.getY())) {
+				int bagNum = (700+bagSize-e.getX())/bagSize;
+				
+				player.clickBag(bagNum);
+			}
+			if(e.getButton() == MouseEvent.BUTTON3){
+				for (Bag bag : player.getBags()) {
+					if(bag.isOpen()) {
+						if(mouseOnItem(e.getX(), e.getY(), player.getBags().indexOf(bag), bag.getRows(), bag.getColumns())) {
+							int row = (500-e.getY())/bagSize;
+							int column = (700+bagSize-player.getBags().indexOf(bag)*bagSize-e.getX())/bagSize;
+							
+							ArrayList<Item>[][] item = bag.getItems();
+							if(!item[row][column].isEmpty()) {
+								Event ev = new Event(EventType.RIGHT_CLICK_ITEM);
+								try {
+									item[row][column].get(0).trigger(ev, player);
+								} catch (PreventDefaultException e1) {}
+							}
+						}
+						break;
+					}
+				}
+			}
+			
+			
 			//try {
 				//Stuff
 			System.out.println("MOUSE PRESSED => Button: "+e.getButton()+" X:"+e.getX()+" Y:"+e.getY());

@@ -11,6 +11,8 @@ public class Player extends Block {
 	
 	private Image img;
 	
+	private ArrayList<Bag> bags = new ArrayList<>();
+	
 	Player(int row, int column, Image img, EventListener parent) {
 		this.row = row;
 		this.column = column;
@@ -18,6 +20,36 @@ public class Player extends Block {
 		
 		this.parent = parent;
 		this.state = BlockState.VISIBLE;
+		
+		ItemBag firstBag = new ItemBag(4,2);
+		firstBag.setOpen(false);
+		bags.add(firstBag);
+		firstBag.add(new Sword(), 0, 0);
+		firstBag.add(new Sword(), 1, 0);
+		firstBag.add(new Sword(), 1, 0);
+		firstBag.add(new Sword(), 1, 0);
+		firstBag.add(new Sword(), 0, 0);
+		firstBag.add(new Sword(), 0, 1);
+		
+		ItemBag secondBag = new ItemBag(3,5);
+		secondBag.setOpen(false);
+		bags.add(secondBag);
+		secondBag.add(new Sword(), 2, 2);
+		
+		ItemBag thirdBag = new ItemBag(2,7);
+		thirdBag.setOpen(false);
+		bags.add(thirdBag);
+	}
+	
+	public void clickBag(int bagNum) {
+		System.out.println("Clicked bag");
+		if(bags.get(bagNum).isOpen()) bags.get(bagNum).setOpen(false);
+		else {
+			for (Bag bag : bags) {
+				bag.setOpen(false);
+			}
+			bags.get(bagNum).setOpen(true);
+		}
 	}
 	
 	public double getHP() {
@@ -30,6 +62,10 @@ public class Player extends Block {
 
 	public Image getImage() {
 		return img;
+	}
+	
+	public ArrayList<Bag> getBags() {
+		return bags;
 	}
 
 	private void onTick(EventListener sender) throws PreventDefaultException {
@@ -133,6 +169,9 @@ public class Player extends Block {
 		}
 		else if(event.type == EventType.SEE) {
 			state = BlockState.VISIBLE; 
+		}
+		else if(event.type == EventType.DESTROY_ME) {
+			System.out.println("DESTROYED");
 		}
 		else if(event.type == EventType.SPAWN) {
 			updateVision(sender);

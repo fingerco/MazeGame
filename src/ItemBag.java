@@ -1,8 +1,8 @@
 import java.util.ArrayList;
 
 
-public class ItemBag extends Bag<Carryable> {
-	private ArrayList<Carryable> items[][];
+public class ItemBag extends Bag<Item> {
+	private ArrayList<Item> items[][];
 	private int rows;
 	private int columns;
 
@@ -12,22 +12,33 @@ public class ItemBag extends Bag<Carryable> {
 		
 		items = new ArrayList[rows][columns];
 		
-		for(int i = 0; i < columns; i++) {
-			for(int j = 0; j < rows; j++) {
-				items[i][j] = new ArrayList<Carryable>();
+		for(int i = 0; i < rows; i++) {
+			for(int j = 0; j < columns; j++) {
+				items[i][j] = new ArrayList<Item>();
 			}
 		}
 	}
 
 	@Override
-	public void add(Carryable object, int row, int column) {
-		items[row][column].add(object);
+	public void add(Item item, int row, int column) {
+		items[row][column].add(item);
 		
 	}
 
 	@Override
-	public void remove(Carryable object, int row, int column) {
-		items[row][column].remove(object);
+	public void remove(Item item, int row, int column) {
+		items[row][column].remove(item);
+	}
+	
+	public int getRows() {
+		return rows;
+	}
+	public int getColumns() {
+		return columns;
+	}
+	
+	public ArrayList<Item>[][] getItems() {
+		return items;
 	}
 
 	@Override
